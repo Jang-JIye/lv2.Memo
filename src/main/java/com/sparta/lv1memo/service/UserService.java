@@ -2,18 +2,20 @@ package com.sparta.lv1memo.service;
 
 import com.sparta.lv1memo.dto.SignupRequestDto;
 import com.sparta.lv1memo.entity.User;
+import com.sparta.lv1memo.entity.UserRoleEnum;
+import com.sparta.lv1memo.jwt.JwtUtil;
 import com.sparta.lv1memo.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
+@Service  // @RequiredArgsConstructor
 public class UserService {
-    
+
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;  // 비밀번호 암호화
-    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;  // 내가 등록한거 가져오기
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -22,16 +24,23 @@ public class UserService {
     }
 
     // ADMIN_TOKEN _일반 사용자인지 관리자인지 구분하기 위해 사용함
-//    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";  // 실제로 이렇게 주진 않음
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";  // 실제로 이렇게 주진 않음
 
-    // ★★ 회원가입 성공시 Client로 성공했다는 메세지, 상태코드를 반환해야됨
     public void signup(SignupRequestDto requestDto) {
-        // client가 입력한 username 변수화
+
+        // - username 변수
         String username = requestDto.getUsername();
-        // client가 입력한 비밀번호 인코딩
-        String password = passwordEncoder.encode(requestDto.getPassword());  
-        
-        // 회원 중복확인
-        Optional<User> checkUserOverlap = userRepository.findbyUsername(username); // findbyUsername 반환형태가 Optional임
+        // - password encoding
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        // 회원 중복 확인
+        Optional<User> checkUsername = userRepository.findByUsername(username);
+        if (checkUsername.isPresent()) {
+            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        }
+
+        // 사용자 등록
+        User user = new User(username, password);
+        userRepository.save(user);
     }
 }
