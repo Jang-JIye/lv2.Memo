@@ -9,4 +9,4 @@
 <br/>
 
 ## API 명세서
- ![image](https://github.com/Jang-JIye/lv1memo/assets/117057863/125226e5-168b-45f3-8b00-6ef8b6ab40ca)
+<img src="src/main/resources/static/img/MemoAPI.png">
