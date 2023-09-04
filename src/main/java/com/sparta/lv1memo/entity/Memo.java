@@ -36,15 +36,15 @@ public class Memo extends TimeStamped {
 
     public Memo(MemoRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
-        this.username = requestDto.getUsername();
+        this.username = user.getUsername();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
+        this.password = user.getPassword();
         this.user = user;
     }
 
     public void update(MemoRequestDto requestDto) {
         this.title = requestDto.getTitle();
-        this.username = requestDto.getUsername();
+        this.username = user.getUsername();
         this.contents = requestDto.getContents();
     }
 }

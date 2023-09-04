@@ -71,7 +71,7 @@ public class MemoService {
         // memo 수정
         memo.update(requestDto);
         // 수정할 때 비밀번호 검증
-        if (requestDto.getPassword().equals(memo.getPassword())) {
+        if (userDetails.getPassword().equals(memo.getPassword())) {
             // 수정 성공
             return ResponseEntity.ok("수정 성공!");
         } else {

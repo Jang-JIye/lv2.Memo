@@ -7,14 +7,12 @@ import java.time.LocalDateTime;
 
 @Getter
 public class MemoResponseDto {
-    private Long id;
     private String title;//제목
     private String username;//작성자명
     private String contents;//작성 내용
     private LocalDateTime createdAt; // 작성시간
 
     public MemoResponseDto(Memo memo) {
-        this.id = memo.getId();
         this.title = memo.getTitle();
         this.username = memo.getUsername();
         this.contents = memo.getContents();
