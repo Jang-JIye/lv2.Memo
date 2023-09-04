@@ -1,8 +1,6 @@
 package com.sparta.lv1memo.entity;
 
 public enum UserRoleEnum {
-    // 유저 권한 설정하는 Enum
-
     USER(Authority.USER),  // 사용자 권한
     ADMIN(Authority.ADMIN);  // 관리자 권한
 

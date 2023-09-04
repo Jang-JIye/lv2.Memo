@@ -1,8 +1,11 @@
 package com.sparta.lv1memo.service;
 
+
 import com.sparta.lv1memo.dto.MemoRequestDto;
 import com.sparta.lv1memo.dto.MemoResponseDto;
 import com.sparta.lv1memo.entity.Memo;
+import com.sparta.lv1memo.entity.User;
+import com.sparta.lv1memo.entity.UserRoleEnum;
 import com.sparta.lv1memo.repository.MemoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,21 +21,26 @@ public class MemoService {
         this.memoRepository = memoRepository;
     }
 
-    public MemoResponseDto createMemo(MemoRequestDto requestDto) {
+    public MemoResponseDto createMemo(MemoRequestDto requestDto, User user) {
         //RequestDto -> Entity
-        Memo memo = new Memo(requestDto);
-        //DB 저장
-        Memo saveMemo = memoRepository.save(memo);
-        //Entity -> ResponseDto
-        MemoResponseDto memoResponseDto = new MemoResponseDto(saveMemo);
+        Memo memo = memoRepository.save(new Memo(requestDto, user));
 
-        return memoResponseDto;
+        //Entity -> ResponseDto
+        return new MemoResponseDto(memo);
     }
 
 
-    public List<MemoResponseDto> getMemos() {
+    public List<MemoResponseDto> getMemos(User user) {
         //DB 조회
-        return memoRepository.findAllByOrderByModifiedAtDesc().stream().map(MemoResponseDto::new).toList();
+        UserRoleEnum userRoleEnum = user.getRole();
+        List<Memo> memoList;
+
+        if(userRoleEnum == UserRoleEnum.USER) {
+            memoList = memoRepository.findAllByUserOrderByModifiedAtDesc(user);  // 유저권한, 현재 유저가 작성한 게시글만 조회
+        } else {
+            memoList = memoRepository.findAllByOrderByModifiedAtDesc();  // 관리자권한, 모든 메모 조회
+        }
+        return memoList.stream().map(MemoResponseDto::new).toList();
     }
 
 

@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
@@ -31,7 +32,7 @@ public class UserDetailsImpl implements UserDetails {
         return user.getUsername();
     }
 
-    @Override  // 권한설정할때 사용함
+    @Override // 권한설정할때 사용함
     public Collection<? extends GrantedAuthority> getAuthorities() {
         UserRoleEnum role = user.getRole();
         String authority = role.getAuthority();

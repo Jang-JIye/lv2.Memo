@@ -19,3 +19,4 @@ public class MemoResponseDto {
         this.createdAt = memo.getCreatedAt();
     }
 }
+

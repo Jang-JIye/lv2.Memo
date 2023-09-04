@@ -9,9 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Getter
-@MappedSuperclass // Entity 클래스의 상속
+@MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-//Timestamped 클래스 자체가 다른 클래스에 상속되는 클래스기 때문에 abstract 으로 선언
 public abstract class TimeStamped {
 
     @CreatedDate
@@ -20,8 +19,7 @@ public abstract class TimeStamped {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column // updatable = true 가 default
+    @Column
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime modifiedAt;
 }
-

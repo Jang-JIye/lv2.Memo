@@ -6,13 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter @Setter
 @Table(name = "memo")
 @NoArgsConstructor
-public class Memo extends TimeStamped{
+public class Memo extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,19 +26,28 @@ public class Memo extends TimeStamped{
 
     @Column(name = "password", nullable = false)
     private String password;//비밀번호
-//    private LocalDateTime date;//작성 날짜
 
-    public Memo(MemoRequestDto requestDto) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
+    public Memo(MemoRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
         this.password = requestDto.getPassword();
-//        this.date = LocalDateTime.now();
+        this.user = user;
     }
 
     public void update(MemoRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        user.getMemoList().add(this);
     }
 }
