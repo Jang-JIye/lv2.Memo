@@ -61,17 +61,17 @@ public class MemoService {
 
 
     @Transactional
-    public ResponseEntity<String> updateMemo(Long id, MemoRequestDto requestDto, UserDetailsImpl userDetails) {
+    public ResponseEntity<String> updateMemo(Long id, MemoRequestDto requestDto, User user) {
         // 해당 메모가 DB에 존재하는지 확인
         Memo memo = findMemo(id);
         // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
-        if (!memo.getUsername().equals(userDetails.getUsername())) {
+        if (!memo.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("해당 메모를 수정할 권한이 없습니다.");
         }
         // memo 수정
         memo.update(requestDto);
         // 수정할 때 비밀번호 검증
-        if (userDetails.getPassword().equals(memo.getPassword())) {
+        if (user.getPassword().equals(memo.getPassword())) {
             // 수정 성공
             return ResponseEntity.ok("수정 성공!");
         } else {
@@ -80,12 +80,12 @@ public class MemoService {
     }
 
 
-    public ResponseEntity<String> deleteMemo(Long id, UserDetailsImpl userDetails) {
+    public ResponseEntity<String> deleteMemo(Long id, User user) {
         // 해당 메모가 DB에 존재하는지 확인
         Memo memo = findMemo(id);
 
         // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
-        if (!memo.getUsername().equals(userDetails.getUsername())) {
+        if (!memo.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("해당 메모를 삭제할 권한이 없습니다.");
         }
         // memo 삭제

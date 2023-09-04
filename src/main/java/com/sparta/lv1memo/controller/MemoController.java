@@ -44,12 +44,13 @@ public class MemoController {
     @PutMapping("/memos/{id}")
     public ResponseEntity<String> updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto
                                               , @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return memoService.updateMemo(id, requestDto, userDetails);
+        return memoService.updateMemo(id, requestDto, userDetails.getUser());
+
     }
 
     //delete
     @DeleteMapping("/memos/{id}")
     public ResponseEntity<String> deleteMemo(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return memoService.deleteMemo(id, userDetails);
+        return memoService.deleteMemo(id, userDetails.getUser());
     }
 }
