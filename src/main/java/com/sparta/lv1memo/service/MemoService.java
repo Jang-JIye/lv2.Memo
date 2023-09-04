@@ -7,6 +7,7 @@ import com.sparta.lv1memo.entity.User;
 import com.sparta.lv1memo.entity.UserRoleEnum;
 import com.sparta.lv1memo.repository.MemoRepository;
 import com.sparta.lv1memo.security.UserDetailsImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,23 +46,26 @@ public class MemoService {
     }
 
 
-    public Memo getMemo(Long id, UserDetailsImpl userDetails) {
+    public MemoResponseDto getMemo(Long id, User user) {
         // 해당 메모가 DB에 존재하는지 확인
         Memo memo = findMemo(id);
 
         // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
-        if (!memo.getUser().equals(userDetails.getUser())) {
+        if (!memo.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("해당 메모에 접근 권한이 없습니다.");
         }
-        return memo;
+        return new MemoResponseDto(memo);
     }
+
+
+
 
     @Transactional
     public ResponseEntity<String> updateMemo(Long id, MemoRequestDto requestDto, UserDetailsImpl userDetails) {
         // 해당 메모가 DB에 존재하는지 확인
         Memo memo = findMemo(id);
         // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
-        if (!memo.getUser().equals(userDetails.getUser())) {
+        if (!memo.getUsername().equals(userDetails.getUsername())) {
             throw new IllegalArgumentException("해당 메모를 수정할 권한이 없습니다.");
         }
         // memo 수정
@@ -81,12 +85,13 @@ public class MemoService {
         Memo memo = findMemo(id);
 
         // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
-        if (!memo.getUser().equals(userDetails.getUser())) {
+        if (!memo.getUsername().equals(userDetails.getUsername())) {
             throw new IllegalArgumentException("해당 메모를 삭제할 권한이 없습니다.");
         }
         // memo 삭제
         memoRepository.delete(memo);
-        return ResponseEntity.ok("삭제 성공!");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("{\"status\": 200, \"msg\": \"삭제 성공\"}");
     }
 
 

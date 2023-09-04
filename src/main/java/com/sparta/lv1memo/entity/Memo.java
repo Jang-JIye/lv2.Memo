@@ -1,5 +1,6 @@
 package com.sparta.lv1memo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.lv1memo.dto.MemoRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Memo extends TimeStamped {
     @Column(name = "password", nullable = false)
     private String password;//비밀번호
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
