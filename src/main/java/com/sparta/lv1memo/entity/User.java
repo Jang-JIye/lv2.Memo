@@ -1,5 +1,6 @@
 package com.sparta.lv1memo.entity;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -33,21 +33,22 @@ public class MemoController {
         return memoService.getMemos(userDetails.getUser());
     }
 
+
     //read
     @GetMapping("/memos/{id}")
-    public Memo getMemo(@PathVariable Long id) {
-        return memoService.getMemo(id);
+    public Memo getMemo(@PathVariable Long id, UserDetailsImpl userDetails) {
+        return memoService.getMemo(id, userDetails);
     }
 
     //update
     @PutMapping("/memos/{id}")
-    public ResponseEntity<String> updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {
-        return memoService.updateMemo(id, requestDto);
+    public ResponseEntity<String> updateMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto, UserDetailsImpl userDetails) {
+        return memoService.updateMemo(id, requestDto, userDetails);
     }
 
     //delete
     @DeleteMapping("/memos/{id}")
-    public ResponseEntity<String> deleteMemo(@PathVariable Long id, @RequestBody MemoRequestDto requestDto) {
-        return memoService.deleteMemo(id, requestDto);
+    public ResponseEntity<String> deleteMemo(@PathVariable Long id, UserDetailsImpl userDetails) {
+        return memoService.deleteMemo(id, userDetails);
     }
 }

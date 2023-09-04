@@ -27,7 +27,7 @@ public class Memo extends TimeStamped {
     @Column(name = "password", nullable = false)
     private String password;//비밀번호
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -44,10 +44,5 @@ public class Memo extends TimeStamped {
         this.title = requestDto.getTitle();
         this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        user.getMemoList().add(this);
     }
 }

@@ -1,17 +1,18 @@
 package com.sparta.lv1memo.service;
 
-
 import com.sparta.lv1memo.dto.MemoRequestDto;
 import com.sparta.lv1memo.dto.MemoResponseDto;
 import com.sparta.lv1memo.entity.Memo;
 import com.sparta.lv1memo.entity.User;
 import com.sparta.lv1memo.entity.UserRoleEnum;
 import com.sparta.lv1memo.repository.MemoRepository;
+import com.sparta.lv1memo.security.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 
 @Service
 public class MemoService {
@@ -36,7 +37,7 @@ public class MemoService {
         List<Memo> memoList;
 
         if(userRoleEnum == UserRoleEnum.USER) {
-            memoList = memoRepository.findAllByUserOrderByModifiedAtDesc(user);  // 유저권한, 현재 유저가 작성한 게시글만 조회
+            memoList = memoRepository.findAllByUserOrderByModifiedAtDesc(user);  // 유저권한, 현재 유저의 메모만 조회
         } else {
             memoList = memoRepository.findAllByOrderByModifiedAtDesc();  // 관리자권한, 모든 메모 조회
         }
@@ -44,21 +45,30 @@ public class MemoService {
     }
 
 
-    public Memo getMemo(Long id) {
-        //해당 메모가 DB에 존재하는지 확인
+    public Memo getMemo(Long id, UserDetailsImpl userDetails) {
+        // 해당 메모가 DB에 존재하는지 확인
         Memo memo = findMemo(id);
+
+        // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
+        if (!memo.getUser().equals(userDetails.getUser())) {
+            throw new IllegalArgumentException("해당 메모에 접근 권한이 없습니다.");
+        }
         return memo;
     }
 
     @Transactional
-    public ResponseEntity<String> updateMemo(Long id, MemoRequestDto requestDto) {
-        //해당 메모가 DB에 존재하는지 확인
+    public ResponseEntity<String> updateMemo(Long id, MemoRequestDto requestDto, UserDetailsImpl userDetails) {
+        // 해당 메모가 DB에 존재하는지 확인
         Memo memo = findMemo(id);
-            //memo 수정
+        // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
+        if (!memo.getUser().equals(userDetails.getUser())) {
+            throw new IllegalArgumentException("해당 메모를 수정할 권한이 없습니다.");
+        }
+        // memo 수정
         memo.update(requestDto);
-        //수정을 요청할 때 수정할 데이터와 비밀번호를 같이 보내서 서버에서 비밀번호 일치 여부를 확인
+        // 수정할 때 비밀번호 검증
         if (requestDto.getPassword().equals(memo.getPassword())) {
-//                return id;
+            // 수정 성공
             return ResponseEntity.ok("수정 성공!");
         } else {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -66,18 +76,19 @@ public class MemoService {
     }
 
 
-    public ResponseEntity<String> deleteMemo(Long id, MemoRequestDto requestDto) {
-        //해당 메모가 DB에 존재하는지 확인
+    public ResponseEntity<String> deleteMemo(Long id, UserDetailsImpl userDetails) {
+        // 해당 메모가 DB에 존재하는지 확인
         Memo memo = findMemo(id);
-            // 삭제 시 비밀번호 확인
-            if (requestDto.getPassword().equals(memo.getPassword())) {
-                // memo 삭제
-                memoRepository.delete(memo);
-                return ResponseEntity.ok("삭제 성공!");
-            } else {
-                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-            }
+
+        // 해당 메모의 작성자와 현재 로그인한 사용자를 비교하여 작성자가 같지 않으면 예외 발생
+        if (!memo.getUser().equals(userDetails.getUser())) {
+            throw new IllegalArgumentException("해당 메모를 삭제할 권한이 없습니다.");
+        }
+        // memo 삭제
+        memoRepository.delete(memo);
+        return ResponseEntity.ok("삭제 성공!");
     }
+
 
     private Memo findMemo(Long id) {
         return memoRepository.findById(id).orElseThrow(() ->
