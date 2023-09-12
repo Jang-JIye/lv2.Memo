@@ -1,9 +1,9 @@
-# lv1memo
+# lv2memo
 <br/>
 
-# 🐣 Lv.1 메모장 만들기
+# 🐣 Lv.2 메모장 만들기
 
- -  로그인 기능이 없는 CRUD를 구성
+ - 로그인, 회원가입 기능 추가
  - MySQL 연결 
  - Controller, Service, Repository로 분리
 <br/>
